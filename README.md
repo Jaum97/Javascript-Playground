@@ -1,2 +1,2 @@
 # Javascript-Playground
-Repo to just store random JS code
+Repo to store random JS code and snippets
