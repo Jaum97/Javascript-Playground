@@ -4,7 +4,6 @@ const fn = ( x ) => x * 2
 
 const arr2 = arr.map(fn)
 
-
 const arr3 = arr.reduce(fn)
 
 const mapReduce = ( arr , fn ) => {
@@ -25,4 +24,29 @@ const newArr = [
 
 const arr5 = mapReduce(newArr, (x) => x.job )  
 
-console.log({arr2, arr5})
+
+// 
+const arr2 = ['1','2','3','4','5']
+
+const fn2 = x => x * 2
+
+
+const arrayReducer = (target, cur) => target.concat(cur)
+
+const stringReducer = (target, cur) => target + cur
+
+
+const transducer = (transform) => (reducer) => (target, cur) => {
+    		const processed = transform(cur)
+        
+       		return reducer(target, processed)
+}
+
+function mapTransducer(arr, transform) {
+	return arr.reduce(transducer(transform)(arrayReducer), [])
+}
+
+
+const test1 = arr.reduce(stringReducer , '')
+const test2 = mapTransducer(arr, fn2)
+console.log(test1, test2)
