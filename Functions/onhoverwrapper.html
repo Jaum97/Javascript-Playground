@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+// sketch of onhover wrapper to fetch data and display on click
+<html>
+<head>
+<title>Page Title</title>
+</head>
+<body>
+
+
+<script>
+const fn = () => {
+	console.log('clicked')
+    const p1 = new Promise(r => {
+        setTimeout(() => {
+             console.log(42)
+             r(42)
+        }, 1000)
+    })
+    
+    return p1.resolve(42)
+}
+
+let res
+
+const btn = document.createElement('BUTTON')
+
+btn.onclick = () => !res && alert(res)
+
+btn.innerHTML = 'potato'
+
+const hoverWrapper = (elem, fn) => {
+	console.log('called')
+    if(!res) {
+      const f = () => {
+          res = fn()
+      }
+
+      elem.onmouseover = f
+    }
+    
+    console.log(elem)
+    return elem
+}
+
+const btnhover = hoverWrapper(btn,fn)
+
+const body = document.getElementsByTagName('body')[0]
+
+body.appendChild(btn)
+
+</script>
+
+</body>
+</html>
