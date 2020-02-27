@@ -14,17 +14,22 @@ const t1 = pipe(
 
 t1 // [ 'AAA', 'AAA' ] ​​​​​at ​​​t1​​​ ​quokka.ts:25:0​
 
-const pipeableArrayMethod = (method) => (...callback) => (arr) => {
-  if(!Array.isArray(arr)) {
-    throw TypeError(`type ${typeof arr} is not a valid array`);
-  }
-
-	// TODO: validate method : /
+// TODO: Type this properly
+const pipeableArrayMethod = <M extends (...args: any[]) => any>(method: M) =>  {
   if(method.apply([], [Boolean, []]) === undefined) {
     throw TypeError(`${method} is not a pipeable array method`);
   }
 
-  return method.apply(arr, callback)
+  return <C extends [(...args: any[]) => any, ...any[]]>(...callback: C) => {
+    return <T>(arr: Array<T>): ReturnType<C[0]> => {
+
+      if(!Array.isArray(arr)) {
+        throw TypeError(`type ${typeof arr} is not a valid array`);
+      }
+      
+      return method.apply(arr, callback)
+    }
+  }
 }
 
 const pipeableMap = pipeableArrayMethod(Array.prototype.map)
@@ -55,3 +60,22 @@ t5
 const t6 = (Array.prototype)
 
 t6
+
+const fn1 = x => {
+ 
+  if(!Array.isArray(x)) {
+    throw TypeError('potato')
+  }
+
+  return y => {
+    
+
+    x.map(y)
+
+  } 
+  
+}
+
+const t7 = fn1(2)(x => x * 2)
+
+t7
