@@ -1,3 +1,4 @@
+const isFn = val => val instanceof Function
 
 const updateDeep = function (path, payload, obj) {
 	const created = JSON.parse(JSON.stringify(obj))
@@ -12,7 +13,11 @@ const updateDeep = function (path, payload, obj) {
 		const key = pathArr[i]
 
 		if (i === len) {
-			nested[key] = payload
+			if(isFn(payload)) {
+				nested[key] = payload(nested[key])
+			} else {
+				nested[key] = payload
+			}
 		}
 
 		nested = nested[key]
@@ -28,7 +33,7 @@ const obj = {
 			c: 'potato'
 		}
 	},
-	skills: []
+	skills: [1,2,3,4]
 }
 
 const obj2 = updateDeep('a.b.c', 'banana', obj)
@@ -64,3 +69,11 @@ t03
 console.time('')
 const t = Array(1000).fill(0).map((_, i) => i + 1)
 console.timeEnd('')
+
+const pipeableFilter = callback => array => array.filter(callback)
+
+const isEven = x => x % 2 === 0
+
+const obj3 = updateDeep('skills', pipeableFilter(isEven), obj)
+
+obj3 // { a: { b: { c: 'potato' } }, skills: [ 2, 4 ] } 
