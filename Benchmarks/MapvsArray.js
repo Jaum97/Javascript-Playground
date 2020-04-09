@@ -37,3 +37,32 @@ find: 0.0546875ms
 access: 0.0068359375ms
 get: 0.010986328125ms
 */
+
+
+
+
+
+const fn00 = (_, i): Readonly<[number, any]> => [i, { potato: "potato" + i }];
+
+console.time('arr00')
+
+const arr00 = Array(100).fill(0).map(fn);
+
+const t00 = arr00.map(x => [x[0], { ...x[1], potato: x[1].potato + '1'}])
+
+console.timeEnd('arr00')
+
+console.time('map00')
+const map00 = new Map(arr00)
+
+const t01 = map00.entries()
+
+for(let i of t01) {
+	map00.set(i[0], { ...i[1], potato: i[1].potato + '1'})
+}
+console.timeEnd('map00')
+
+
+
+
+
