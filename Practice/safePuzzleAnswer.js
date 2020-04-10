@@ -1,14 +1,10 @@
-//Not working yet ://
-
 const clue1 = { nums: [2, 8, 9], corrects: 1, rightPlaces: 1 }
 const clue2 = { nums: [2, 1, 5], corrects: 1, rightPlaces: 0 }
 const clue3 = { nums: [9, 4, 2], corrects: 2, rightPlaces: 0 }
 const clue4 = { nums: [7, 3, 8], corrects: 0, rightPlaces: 0 }
 const clue5 = { nums: [7, 8, 4], corrects: 1, rightPlaces: 0 }
 
-const clues1 = [clue1, clue2, clue3, clue4, clue5]
 
-const p1 = openLock(clues1)
 
 const clue6 = { nums: [6, 8, 2], corrects: 1, rightPlaces: 1 }
 const clue7 = { nums: [6, 1, 4], corrects: 1, rightPlaces: 0 }
@@ -16,9 +12,15 @@ const clue8 = { nums: [2, 0, 6], corrects: 2, rightPlaces: 0 }
 const clue9 = { nums: [7, 3, 8], corrects: 0, rightPlaces: 0 }
 const clue10 = { nums: [3, 8, 0], corrects: 1, rightPlaces: 0 }
 
+const clues1 = [clue1, clue2, clue3, clue4, clue5]
 const clues2 = [clue6, clue7, clue8, clue9, clue10]
 
+const p1 = openLock(clues1)
 const p2 = openLock(clues2)
+
+p1
+
+p2
 
 function openLock(clues) {
 	const flat = (x) => x.reduce((a, b) => a.concat(b), [])
@@ -56,37 +58,27 @@ function openLock(clues) {
 
 	const possibles = Array.from(new Set(flat(possibleNums))).sort()
 
-	const getCombs = (fixedPos, nums) => {
-		const combs = []
-
-		let fixed = nums[fixedPos]
-
-		let toIterate = nums.filter((x) => x !== fixed).sort()
-
-		let len = toIterate.length
+	const getAllCombs = (nums) => {
+		const len = nums.length
+		const res = []
 
 		for (let i = 0; i < len; i++) {
-			combs.push([fixed, nums[i], nums[i + 1]])
+			for (let j = 0; j < len; j++) {
+				for (let k = 0; k < len; k++) {
+					let comb = [nums[i], nums[j], nums[k]]
+
+					res.push(comb)
+				}
+			}
 		}
 
-		return combs
-	}
-
-	const getAllCombs = (nums) => {
-		const combs = []
-
-		for (let i = 0; i < nums.length; i++) {
-			combs.push(getCombs(i, nums))
-		}
-
-		return flat(combs)
+		return res
 	}
 
 	const allCombinations = getAllCombs(possibles)
 
 	const password = allCombinations.filter(matchesAllClues)
 
- 
 	const checkPassword = (pass) => (clue) => {
 		if (!clue.corrects) return pass.every((x) => !clue.nums.includes(x))
 
@@ -108,5 +100,6 @@ function openLock(clues) {
 		clues.every((c) => checkPassword(p)(c))
 	)
 
-	return checked
+	return flat(checked)
 }
+
