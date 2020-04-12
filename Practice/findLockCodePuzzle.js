@@ -40,11 +40,11 @@ function findLockCode(clues) {
 			return indexInClue !== -1 && indexInPassword === indexInClue
 		}
 
-		const passes = password.some(matchesPosition)
+		const matchesAnyPosition = password.some(matchesPosition)
 
-		if (!clue.correctPlaces) return !passes
+		if (!clue.correctPlaces) return !matchesAnyPosition
 
-		return passes
+		return matchesAnyPosition
 	}
 
 	const matchesAllClues = (password) => clues.every(checkPassword(password))
