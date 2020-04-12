@@ -3,13 +3,23 @@ function findLockCode(clues) {
 
 	const compareValues = (v1) => (v2) => v1 === v2
 
+	const clueNumbers = flat(clues.map((clue) => clue.nums))
+
+	const possibleNums = Array.from(new Set(clueNumbers))
+
 	const getAllCombinations = () => {
 		const len = 10
 		const combinations = []
 
 		for (let i = 0; i < len; i++) {
+			if (!possibleNums.includes(i)) continue
+
 			for (let j = 0; j < len; j++) {
+				if (!possibleNums.includes(j)) continue
+
 				for (let k = 0; k < len; k++) {
+					if (!possibleNums.includes(k)) continue
+
 					combinations.push([i, j, k])
 				}
 			}
@@ -27,9 +37,9 @@ function findLockCode(clues) {
 
 		const union = flat(password.filter(isInClueNums))
 
-		const unionSet = Array.from(new Set(union))
+		const unionSet = new Set(union)
 
-		const matchesCorrectNumbers = unionSet.length === clue.correctNumbers
+		const matchesCorrectNumbers = unionSet.size === clue.correctNumbers
 
 		if (!matchesCorrectNumbers) return false
 
@@ -95,6 +105,11 @@ const clue32 = { nums: [2, 0, 6], correctNumbers: 2, correctPlaces: 0 }
 const clue33 = { nums: [7, 3, 8], correctNumbers: 0, correctPlaces: 0 }
 const clue34 = { nums: [7, 8, 0], correctNumbers: 1, correctPlaces: 0 }
 
+const clue35 = { nums: [2, 0, 0], correctNumbers: 1, correctPlaces: 1 }
+const clue36 = { nums: [0, 2, 0], correctNumbers: 1, correctPlaces: 0 }
+const clue37 = { nums: [0, 0, 2], correctNumbers: 1, correctPlaces: 0 }
+const clue38 = { nums: [0, 0, 0], correctNumbers: 0, correctPlaces: 0 }
+
 const puzzle1 = [clue1, clue2, clue3, clue4, clue5]
 const puzzle2 = [clue6, clue7, clue8, clue9, clue10]
 const puzzle3 = [clue11, clue12, clue13, clue14]
@@ -102,6 +117,7 @@ const puzzle4 = [clue15, clue16, clue17, clue18, clue19]
 const puzzle5 = [clue20, clue21, clue22, clue23, clue24]
 const puzzle6 = [clue25, clue26, clue27, clue28, clue29]
 const puzzle7 = [clue30, clue31, clue32, clue33, clue34]
+const puzzle8 = [clue35, clue36, clue37, clue38]
 
 const p1 = findLockCode(puzzle1) // [4, 5, 9]
 
@@ -116,6 +132,8 @@ const p5 = findLockCode(puzzle5) // [7, 1, 8]
 const p6 = findLockCode(puzzle6) // [8, 5, 3]
 
 const p7 = findLockCode(puzzle7) // [0, 5, 2]
+
+const p8 = findLockCode(puzzle8) // [2, 2, 2]
 
 // I was removing impossible numbers from combinations but dont think it is worth the cost:
 
