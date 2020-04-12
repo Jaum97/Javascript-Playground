@@ -1,3 +1,59 @@
+function findLockCode(clues) {
+	const flat = (arr) => arr.reduce((a, b) => a.concat(b), [])
+
+	const compareValues = (v1) => (v2) => v1 === v2
+
+	const getAllCombinations = () => {
+		const len = 10
+		const combinations = []
+
+		for (let i = 0; i < len; i++) {
+			for (let j = 0; j < len; j++) {
+				for (let k = 0; k < len; k++) {
+					combinations.push([i, j, k])
+				}
+			}
+		}
+
+		return combinations
+	}
+
+	const allCombinations = getAllCombinations()
+
+	const checkPassword = (password) => (clue) => {
+		const isInClueNums = (num) => clue.nums.includes(num)
+
+		if (!clue.correctNumbers) return !password.some(isInClueNums)
+
+		const union = flat(password.filter(isInClueNums))
+
+		const unionSet = Array.from(new Set(union))
+
+		const matchesCorrectNumbers = unionSet.length === clue.correctNumbers
+
+		if (!matchesCorrectNumbers) return false
+
+		const matchesPosition = (num) => {
+			const indexInPassword = password.findIndex(compareValues(num))
+			const indexInClue = clue.nums.findIndex(compareValues(num))
+
+			return indexInClue !== -1 && indexInPassword === indexInClue
+		}
+
+		const passes = password.some(matchesPosition)
+
+		if (!clue.correctPlaces) return !passes
+
+		return passes
+	}
+
+	const matchesAllClues = (password) => clues.every(checkPassword(password))
+
+	const password = allCombinations.find(matchesAllClues)
+
+	return password
+}
+
 const clue1 = { nums: [2, 8, 9], correctNumbers: 1, correctPlaces: 1 }
 const clue2 = { nums: [2, 1, 5], correctNumbers: 1, correctPlaces: 0 }
 const clue3 = { nums: [9, 4, 2], correctNumbers: 2, correctPlaces: 0 }
@@ -27,11 +83,25 @@ const clue22 = { nums: [1, 5, 7], correctNumbers: 2, correctPlaces: 0 }
 const clue23 = { nums: [8, 0, 6], correctNumbers: 1, correctPlaces: 0 }
 const clue24 = { nums: [6, 4, 7], correctNumbers: 1, correctPlaces: 0 }
 
+const clue25 = { nums: [1, 5, 4], correctNumbers: 1, correctPlaces: 1 }
+const clue26 = { nums: [4, 3, 1], correctNumbers: 1, correctPlaces: 0 }
+const clue27 = { nums: [8, 1, 3], correctNumbers: 2, correctPlaces: 2 }
+const clue28 = { nums: [2, 6, 8], correctNumbers: 1, correctPlaces: 0 }
+const clue29 = { nums: [4, 3, 5], correctNumbers: 2, correctPlaces: 0 }
+
+const clue30 = { nums: [6, 8, 2], correctNumbers: 1, correctPlaces: 1 }
+const clue31 = { nums: [6, 4, 5], correctNumbers: 1, correctPlaces: 0 }
+const clue32 = { nums: [2, 0, 6], correctNumbers: 2, correctPlaces: 0 }
+const clue33 = { nums: [7, 3, 8], correctNumbers: 0, correctPlaces: 0 }
+const clue34 = { nums: [7, 8, 0], correctNumbers: 1, correctPlaces: 0 }
+
 const puzzle1 = [clue1, clue2, clue3, clue4, clue5]
 const puzzle2 = [clue6, clue7, clue8, clue9, clue10]
 const puzzle3 = [clue11, clue12, clue13, clue14]
 const puzzle4 = [clue15, clue16, clue17, clue18, clue19]
 const puzzle5 = [clue20, clue21, clue22, clue23, clue24]
+const puzzle6 = [clue25, clue26, clue27, clue28, clue29]
+const puzzle7 = [clue30, clue31, clue32, clue33, clue34]
 
 const p1 = findLockCode(puzzle1) // [4, 5, 9]
 
@@ -43,91 +113,13 @@ const p4 = findLockCode(puzzle4) // [8, 4, 6]
 
 const p5 = findLockCode(puzzle5) // [7, 1, 8]
 
-function findLockCode(clues) {
-	const flat = (arr) => arr.reduce((a, b) => a.concat(b), [])
+const p6 = findLockCode(puzzle6) // [8, 5, 3]
 
-	const compareValues = (v1) => (v2) => v1 === v2
-
-	const getAllCombinations = () => {
-		const len = 10
-		const combinations = []
-
-		for (let i = 0; i < len; i++) {
-			for (let j = 0; j < len; j++) {
-				for (let k = 0; k < len; k++) {
-					combinations.push([i, j, k])
-				}
-			}
-		}
-
-		return combinations
-	}
-
-	const allCombinations = getAllCombinations()
-
-	const satisfiesClue = (code) => (clue) => {
-		if (!clue.correctNumbers) return true
-
-		const union = flat(code.filter((num) => clue.nums.includes(num)))
-
-		const unionSet = Array.from(new Set(union))
-
-		const matchesCorrectNumbers = unionSet.length === clue.correctNumbers
-
-		if (matchesCorrectNumbers && !clue.correctPlaces) return true
-
-		const matchesCorrectPlaces = union.some((num) => {
-			let codeIndex = code.findIndex(compareValues(num))
-			let clueIndex = clue.nums.findIndex(compareValues(num))
-
-			return codeIndex === clueIndex
-		})
-
-		return matchesCorrectNumbers && matchesCorrectPlaces
-	}
-
-	const satisfiesAllClues = (code) => clues.every(satisfiesClue(code))
-
-	const possiblePasswords = allCombinations.filter(satisfiesAllClues)
-
-	const checkPassword = (password) => (clue) => {
-		if (!clue.correctNumbers) {
-			return password.every((num) => !clue.nums.includes(num))
-		}
-
-		const union = flat(password.filter((num) => clue.nums.includes(num)))
-
-		const unionSet = Array.from(new Set(union))
-
-		const matchesCorrectNumbers = unionSet.length === clue.correctNumbers
-
-		if (!matchesCorrectNumbers) return false
-
-		const passes = password.some((num) => {
-			const passwordIndex = password.findIndex(compareValues(num))
-			const clueIndex = clue.nums.findIndex(compareValues(num))
-
-			return clueIndex !== -1 && passwordIndex === clueIndex
-		})
-
-		if (!clue.correctPlaces) return !passes
-
-		return passes
-	}
-
-	const checkedPasswords = possiblePasswords.filter((password) =>
-		clues.every(checkPassword(password))
-	)
-
-	const answer =
-		checkedPasswords.length > 1 ? checkedPasswords : flat(checkedPasswords)
-
-	return answer
-}
+const p7 = findLockCode(puzzle7) // [0, 5, 2]
 
 // I was removing impossible numbers from combinations but dont think it is worth the cost:
 
-// const cluesToExclude = clues.filter((clue) => Boolean(clue.correctNumbers && clue.correctPlaces))
+// const cluesToExclude = clues.filter((clue) => Boolean(clue.correctNumbers))
 
 // const numsToExclude = flat(cluesToExclude.map(clue => clue.nums))
 
