@@ -1,0 +1,10 @@
+//https://github.com/tc39/proposal-generator-arrow-functions
+
+generator function() {}
+const foo = async generator function() {};
+
+class Foo {
+  x = 1
+  // No more ASI hazard!
+  generator foo() {}
+}
