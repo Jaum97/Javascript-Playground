@@ -1,0 +1,30 @@
+const arr = Array(10000).fill(0).map((_, i) => i + 1)
+
+const timesTree = x => x * 3
+
+const even = x => x % 2 === 0
+
+console.time('t1')
+
+const t1 = arr.map(timesTree).filter(even)
+
+console.timeEnd('t1')
+
+const timesTreeAndEvenReducer = (x, y) => y * 3 % 2 === 0 ? [...x, y * 3] : x
+
+console.time('t2')
+
+
+const t2 = arr.reduce(timesTreeAndEvenReducer, [])
+
+console.timeEnd('t2')
+
+const t3 = t1.every((x, i) => x === t2[i])
+
+t3
+
+// t1: 2.551ms ​​​​​
+
+// t2: 31.040ms ​​​​​
+
+// true ​​​​​at ​​​t3​​​ ​quokka.js:24:0​
