@@ -1,0 +1,37 @@
+const a = 6
+
+const b = 5
+
+const smaller_branchless = (a, b) => b * ( a > b ) + a * ( b >= a )
+
+const smaller = (a, b) => a > b ? b : a
+
+let t00 = smaller(a, b)
+
+let t01 = smaller_branchless(a, b)
+
+const runXTimes = x => fn => { for(let i = x; i--; fn()); }
+
+const run100MTimes = runXTimes(100_000_000)
+
+console.time('smaller')
+
+run100MTimes(() => smaller(a,b))
+
+console.timeEnd('smaller')
+
+console.time('smaller_branchless')
+
+run100MTimes(() => smaller_branchless(a,b))
+
+console.timeEnd('smaller_branchless')
+
+//smaller: 3712.004ms ​​​​​
+ 
+// smaller_branchless: 3291.403ms
+
+
+
+
+
+
