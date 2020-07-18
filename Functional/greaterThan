@@ -1,0 +1,32 @@
+const arr = [
+  {
+    a: 5,
+    b: 6,
+  },
+  {
+    a: 5,
+    b: 3,
+  },
+  {
+    a: 7,
+    b: 6,
+  },
+];
+
+const greaterThan = (a, b) => a > b;
+
+const smallerThan = (a, b) => a < b;
+
+const pickPropValues = (...props) => (obj) =>
+  Object.entries(obj).reduce(
+    (a, b) => (props.includes(b[0]) ? [...a, b[1]] : a),
+    []
+  );
+
+const pipe = (...fns) => (val) => fns.reduce((cV, cF) => cF(cV), val);
+
+const spreadParams = (fn) => (params) => fn(...params);
+
+const arr2 = arr.map(pipe(pickPropValues("a", "b"), spreadParams(greaterThan)));
+
+arr2;
