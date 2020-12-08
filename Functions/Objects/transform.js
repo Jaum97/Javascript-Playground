@@ -1,6 +1,6 @@
 const getKey = (obj, key) => obj?.[key];
 
-const createKeyExtractor = (key) => (obj) => {
+const getPath = (key) => (obj) => {
   if (!key) return undefined;
 
   const accessors = key.split(".");
@@ -20,12 +20,11 @@ const obj = {
   },
 };
 
-const applyToPath = (fn) => (path) => (obj) =>
-  fn(createKeyExtractor(path)(obj));
+const applyToPath = (fn) => (path) => (obj) => fn(getPath(path)(obj));
 
-const pipeableFilter = (fn) => (arr) => arr.filter(fn);
+const pipeFilter = (fn) => (arr) => arr.filter(fn);
 
-const getEvens = pipeableFilter((x) => x % 2 === 0);
+const getEvens = pipeFilter((x) => x % 2 === 0);
 
 const t00 = applyToPath(getEvens)("a.b.c")(obj);
 
@@ -35,21 +34,24 @@ const pipe = (...fns) => (val) => fns.reduce((cV, cF) => cF(cV), val);
 
 const mergeObjs = (obj1) => (obj2) => Object.assign({}, obj1, obj2);
 
-const getTransformedKey = (transforms) => (cO, [key, value]) => ({
-  ...cO,
-  [key]: transforms[key]?.(value) || value,
-});
+const transformKey = (transform) => (cO, [key, val]) =>
+  mergeObjs(cO)({ [key]: transform[key]?.(val) || val });
 
-const transform = (transforms) => (obj) =>
-  Object.entries(obj).reduce(getTransformedKey(transforms), {});
+const pipeReduce = (fn, initial) => (arr) => arr.reduce(fn, initial);
+
+const transformReducer = (transform) => pipeReduce(transformKey(transform), {});
+
+const transform = (obj) => pipe(Object.entries, transformReducer(obj));
 
 const getGreeting = (name) => `Hello ${name}!`;
+
+const greetingTransform = { name: getGreeting };
 
 const obj2 = {
   name: "Matt",
   gender: "M",
 };
 
-const t01 = transform({ name: getGreeting })(obj2);
+const t01 = transform(greetingTransform)(obj2);
 
 t01;
