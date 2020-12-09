@@ -38,23 +38,21 @@ const list = [{
     }
 ]
 
-const createKeyExtractor = key => obj => {
-    const isComposed = !!key.split('.')[1]
+const createKeyExtractor = (path, separator = '.') => obj => {
+    if(!separator || !path) return undefined
+    
+    const accessors = Array.isArray(path) ? path : path.split(separator)
 
-    let extracted = ''
+    const isComposed = !!accessors[1]
 
-    if (isComposed) {
-        const accessors = key.split('.')
-
-        extracted = accessors.reduce((col, acc) => col[acc], obj)
-    } else {
-        extracted = obj[key]
-    }
-
-    return extracted
+    if (!isComposed) return obj[path]
+    
+    return accessors.reduce((col, acc) => col?.[acc], obj)
 }
 
 const test1 = createKeyExtractor('address.city.info.mayor.name')(list[3])
+                            
+const test2 = createKeyExtractor(['0' ,'address', 'city'])(list)
 
 console.log({
     test1
