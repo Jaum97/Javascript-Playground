@@ -1,0 +1,49 @@
+const prop = (key) => (obj) => obj?.[key];
+
+const mergeRight = (o1) => (o2) => Object.assign({}, o1, o2);
+
+const flip = callback => (arg1, arg2) => callback(arg2, arg1)
+
+const curry = fn => function curried(...args1) {
+    if(args1.length >= fn.length) {
+        return fn(...args1)
+    }
+
+    return (...args2) => curried(...args1.concat(args2))
+}
+
+const reduce = (callback, init = []) => arr => arr.reduce(callback, init)
+
+const obj = {
+    a: undefined,
+    b: "test1",
+    c: "test2",
+  };
+
+const pick = (...keys) => (obj) =>
+  keys.reduce((accumulated, key) => ({ ...accumulated, [key]: obj[key] }), {});
+
+
+const t00 = pick('b', 'c')(obj)
+
+t00
+
+const pickIf = (validator) => (obj) =>
+  Object.keys(obj).reduce(
+    (accumulated, key) => ({
+      ...accumulated,
+      ...(validator(obj[key]) ? { [key]: obj[key] } : {}),
+    }),
+    {}
+  );
+
+const pickIfTruthy = pickIf(Boolean);
+
+const t01 = pickIfTruthy(obj);
+
+t01;
+
+const mergeIf = (validator) => (o1) => (o2) => ({
+  ...o1,
+  ...(validator(o2) ? o2 : {}),
+});
